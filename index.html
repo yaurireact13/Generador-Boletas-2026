@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERAPEUTICO PLUS - Boleta de Venta</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #c8cdd4;
+  min-height: 100vh;
+  padding: 22px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── CONTROLS ── */
+.controls {
+  width:100%; max-width:760px;
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:16px; gap:10px;
+}
+.ctrl-title { font-size:.95rem; font-weight:700; color:#1a3263; }
+.ctrl-btns  { display:flex; gap:8px; }
+.btn {
+  padding:8px 18px; border:none; border-radius:4px;
+  font-size:.8rem; font-weight:700; cursor:pointer;
+  font-family:Arial,sans-serif; transition:.13s;
+}
+.btn-blue  { background:#1a3263; color:#fff; }
+.btn-blue:hover { background:#0e1f42; }
+.btn-red   { background:#b03030; color:#fff; }
+.btn-red:hover  { background:#832020; }
+.btn-green { background:#1a6b40; color:#fff; }
+.btn-green:hover { background:#0f4228; }
+.btn-sm { padding:4px 10px; font-size:.73rem; border-radius:3px; }
+.btn-edit { background:#d4e6f1; color:#1a3263; }
+.btn-del  { background:#fde8e8; color:#8b1a1a; }
+
+/* ── BOLETA ── */
+.boleta {
+  width:100%; max-width:760px;
+  background:#fff;
+  border:1px solid #888;
+  box-shadow:0 3px 16px rgba(0,0,0,.2);
+  font-size:10.5px;
+  color:#000;
+}
+
+/* ── HEADER ROW: logo | ruc+badge ── */
+.bh-head {
+  display:grid;
+  grid-template-columns:1fr 200px;
+  border-bottom:1px solid #000;
+}
+.bh-left {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px;
+  border-right:1px solid #000;
+}
+.logo-sq {
+  width:62px; height:62px; flex-shrink:0;
+  background:#b03030;
+  border:2px solid #000;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  color:#fff; font-weight:900; line-height:1;
+}
+.logo-sq .lt { font-size:22px; letter-spacing:1px; }
+.logo-sq .lb { font-size:11px; margin-top:-2px; }
+.bh-company h2 {
+  font-size:15px; font-weight:900;
+  text-transform:uppercase; letter-spacing:.4px;
+}
+.bh-company .s1 { font-size:9.5px; color:#333; margin-top:3px; }
+.bh-company .s2 { font-size:8.5px; color:#555; margin-top:2px; }
+.s2-input {
+  font-size:8.5px; color:#444; margin-top:2px;
+  background:none; border:none; border-bottom:1px dashed #bbb;
+  outline:none; width:100%; max-width:330px;
+  font-family:Arial,sans-serif;
+}
+.bh-right {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:10px 14px; text-align:center;
+}
+.bh-right .ruc-big { font-size:11.5px; font-weight:700; margin-bottom:7px; }
+.doc-frame {
+  border:2px solid #000;
+  padding:6px 12px; text-align:center;
+}
+.doc-frame .doc-t { font-size:11px; font-weight:900; line-height:1.35; text-transform:uppercase; }
+.doc-frame .doc-n { font-size:12px; font-weight:900; margin-top:5px; letter-spacing:.3px; }
+
+/* ── NOTICE ── */
+.bh-notice {
+  border-bottom:1px solid #000;
+  padding:4px 10px;
+  text-align:center;
+  font-size:9px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.3px;
+  background:#fff;
+}
+
+/* ── CLIENT GRID ── */
+.bh-client {
+  display:grid; grid-template-columns:1fr 1fr;
+  border-bottom:1px solid #000;
+}
+.bc-col { padding:7px 12px; }
+.bc-col:first-child { border-right:1px solid #000; }
+.bc-row {
+  display:flex; align-items:baseline;
+  gap:5px; margin-bottom:5px; font-size:10px;
+}
+.bc-row:last-child { margin-bottom:0; }
+.bc-lbl { font-weight:700; white-space:nowrap; }
+.bc-v   { flex:1; font-size:10px; }
+input.bc-v {
+  flex:1; background:none; border:none;
+  border-bottom:1px dashed #bbb; outline:none;
+  font-family:Arial,sans-serif; font-size:10px; color:#000;
+}
+input.bc-v:focus { border-bottom-color:#1a3263; }
+
+/* ── TABLE ── */
+.tbl-wrap { border-bottom:1px solid #000; }
+table.itbl {
+  width:100%; border-collapse:collapse; font-size:10px;
+}
+table.itbl thead tr { background:#222; color:#fff; }
+table.itbl thead th {
+  padding:5px 5px; font-size:9.5px; font-weight:700;
+  text-align:center; text-transform:uppercase;
+  border-right:1px solid #555;
+}
+table.itbl thead th:last-child { border-right:none; }
+table.itbl tbody tr { border-bottom:1px solid #ddd; }
+table.itbl tbody tr.empty-row { height:17px; }
+table.itbl tbody td {
+  padding:4px 5px; text-align:center;
+  border-right:1px solid #ddd; vertical-align:middle;
+}
+table.itbl tbody td:last-child { border-right:none; }
+table.itbl tbody td.td-d { text-align:left; }
+table.itbl tbody td.td-code { font-family:monospace; font-size:9px; color:#444; }
+.tbl-addbtn { padding:5px 8px; }
+
+/* ── LETRAS ── */
+.bh-letras {
+  border-bottom:1px solid #000;
+  padding:5px 12px;
+  font-size:10.5px; font-weight:700; font-style:italic;
+  text-align:right; letter-spacing:.15px;
+}
+
+/* ── OBS ── */
+.bh-obs {
+  border-bottom:1px solid #000;
+  padding:5px 12px; min-height:26px;
+}
+.bh-obs .obs-lbl { font-weight:700; font-size:10px; margin-bottom:3px; }
+textarea.obs-ta {
+  width:100%; border:none; outline:none; resize:none;
+  font-family:Arial,sans-serif; font-size:10px; color:#000;
+  background:none; min-height:22px;
+}
+
+/* ── BOTTOM QR + TOTALS ── */
+.bh-bottom {
+  display:grid; grid-template-columns:130px 1fr;
+  border-bottom:1px solid #000;
+}
+.bb-qr {
+  border-right:1px solid #000;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:10px 12px; gap:5px;
+}
+#qr-box { width:100px; height:100px; }
+#qr-box canvas, #qr-box img { width:100px !important; height:100px !important; }
+.qr-ph {
+  width:100px; height:100px;
+  border:1px solid #ccc;
+  display:flex; align-items:center; justify-content:center;
+  font-size:8px; color:#aaa; text-align:center; line-height:1.3;
+}
+.qr-label { font-size:7.5px; color:#666; text-align:center; line-height:1.4; }
+
+.bb-totals {
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:6px 0 0 0;
+}
+.tot-row {
+  display:flex; justify-content:space-between;
+  padding:2.5px 14px; font-size:10px;
+  border-bottom:1px solid #eee;
+}
+.tot-row:last-child { border-bottom:none; }
+.tot-lbl { font-weight:700; }
+.tot-val { }
+.tot-grand {
+  display:flex; justify-content:flex-end;
+  align-items:center; gap:14px;
+  padding:7px 14px;
+  border-top:2px solid #000;
+  background:#f5f5f5;
+}
+.tot-grand .tg-label { font-size:16px; font-weight:900; }
+.tot-grand .tg-val   { font-size:16px; font-weight:900; }
+
+/* ── STAMP ── */
+.bh-stamp {
+  padding:6px 12px;
+  font-size:8px; color:#444;
+  text-align:center; line-height:1.6;
+  border-top:1px solid #ccc;
+}
+
+/* ── PRINT ── */
+@media print {
+  body { background:#fff; padding:0; }
+  .controls, .no-print { display:none !important; }
+  .boleta { box-shadow:none; max-width:100%; border:1px solid #000; }
+  input, textarea { border-color:transparent !important; }
+  .btn-edit, .btn-del { display:none; }
+  .tbl-addbtn { display:none; }
+}
+
+/* ── MODAL ── */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.52); z-index:999;
+  align-items:center; justify-content:center;
+}
+.overlay.open { display:flex; }
+.modal {
+  background:#fff; border-radius:8px;
+  padding:26px 24px; width:370px;
+  box-shadow:0 10px 40px rgba(0,0,0,.28);
+  animation:pop .17s ease;
+}
+@keyframes pop {
+  from{transform:scale(.92);opacity:0}
+  to  {transform:scale(1);  opacity:1}
+}
+.modal h3 {
+  font-size:.98rem; font-weight:900; color:#1a3263;
+  text-transform:uppercase; letter-spacing:.4px;
+  margin-bottom:18px;
+}
+.fg { margin-bottom:13px; }
+.fg label {
+  display:block; font-size:.7rem; font-weight:700;
+  color:#666; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px;
+}
+.fg input, .fg textarea {
+  width:100%; padding:8px 10px;
+  border:1.5px solid #ccc; border-radius:4px;
+  font-family:Arial,sans-serif; font-size:.88rem;
+  outline:none; transition:border-color .13s;
+}
+.fg input:focus, .fg textarea:focus { border-color:#1a3263; }
+.fg-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.prev {
+  background:#edf3fb; border-radius:5px;
+  padding:10px 13px; margin:13px 0; font-size:.81rem;
+}
+.prow { display:flex; justify-content:space-between; padding:2px 0; color:#333; }
+.prow.pbig {
+  border-top:1px solid #b8cde8; margin-top:5px; padding-top:6px;
+  font-weight:900; font-size:.9rem; color:#1a3263;
+}
+.m-acts { display:flex; gap:8px; justify-content:flex-end; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<!-- CONTROLS -->
+<div class="controls no-print">
+  <span class="ctrl-title">🧾 TERAPEUTICO PLUS — Generador de Boletas</span>
+  <div class="ctrl-btns">
+    <button class="btn btn-blue" onclick="nuevaBoleta()">＋ Nueva Boleta</button>
+    <button class="btn btn-red"  onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+  </div>
+</div>
+
+<!-- ══ BOLETA ══ -->
+<div class="boleta">
+
+  <!-- HEADER -->
+  <div class="bh-head">
+    <div class="bh-left">
+      <div class="logo-sq">
+        <span class="lt">TP</span>
+        <span class="lb">PLUS</span>
+      </div>
+      <div class="bh-company">
+        <h2>TERAPEUTICO PLUS</h2>
+        <div class="s1">
+          RUC: <span id="ruc-edit" contenteditable="true" spellcheck="false"
+            style="outline:none;border-bottom:1px dashed #bbb;min-width:80px;display:inline-block;"
+          >20608273621</span>
+        </div>
+        <input class="s2-input" id="dir-empresa" type="text"
+          value="Jr. Junin Nro. 256 INT. 422-423 (GALERÍA) LIMA - LIMA - LIMA" />
+        <div style="font-size:8px;color:#666;margin-top:3px;">
+          REVISAR SU MERCADERÍA ANTES DE SALIR — NO HAY CAMBIO NI DEVOLUCIONES
+        </div>
+      </div>
+    </div>
+    <div class="bh-right">
+      <div class="ruc-big">RUC <span id="ruc-mirror">20608273621</span></div>
+      <div class="doc-frame">
+        <div class="doc-t">BOLETA DE VENTA<br>ELECTRÓNICA</div>
+        <div class="doc-n" id="num-boleta">B001-00000001</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT -->
+  <div class="bh-client">
+    <div class="bc-col">
+      <div class="bc-row">
+        <span class="bc-lbl">CLIENTE:</span>
+        <input class="bc-v" id="cliente" type="text" placeholder="Nombre completo del cliente" />
+      </div>
+      <div class="bc-row">
+        <span class="bc-lbl">DNI:</span>
+        <input class="bc-v" id="dni" type="text" placeholder="00000000" maxlength="11" style="max-width:120px;" />
+      </div>
+      <div class="bc-row">
+        <span class="bc-lbl">DIRECCIÓN:</span>
+        <input class="bc-v" id="direccion" type="text" placeholder="Dirección" />
+      </div>
+    </div>
+    <div class="bc-col">
+      <div class="bc-row"><span class="bc-lbl">FECHA EMISIÓN:</span><span class="bc-v" id="f-emision"></span></div>
+      <div class="bc-row"><span class="bc-lbl">FECHA VENCIMIENTO:</span><span class="bc-v" id="f-venc"></span></div>
+      <div class="bc-row"><span class="bc-lbl">MONEDA:</span><span class="bc-v">SOLES</span></div>
+      <div class="bc-row"><span class="bc-lbl">FORMA DE PAGO:</span><span class="bc-v">CONTADO</span></div>
+      <div class="bc-row"><span class="bc-lbl">ZONA DE VENTAS:</span><span class="bc-v"></span></div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="tbl-wrap">
+    <table class="itbl">
+      <thead>
+        <tr>
+          <th style="width:26px">N°</th>
+          <th style="width:46px">CANT.</th>
+          <th style="width:58px">UNIDAD</th>
+          <th style="width:72px">CODIGO</th>
+          <th>DESCRIPCIÓN</th>
+          <th style="width:58px">V.UNIT.</th>
+          <th style="width:50px">IGV.</th>
+          <th style="width:58px">P.UNIT.</th>
+          <th style="width:60px">TOTAL</th>
+          <th class="no-print" style="width:54px"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="tbl-addbtn no-print">
+      <button class="btn btn-green btn-sm" onclick="abrirModal()">+ Agregar producto</button>
+    </div>
+  </div>
+
+  <!-- LETRAS -->
+  <div class="bh-letras" id="letras">SON: CERO CON 00/100 SOLES</div>
+
+  <!-- OBS -->
+  <div class="bh-obs">
+    <div class="obs-lbl">OBSERVACIONES:</div>
+    <textarea class="obs-ta" id="obs" rows="2" placeholder="Observaciones adicionales..."></textarea>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bh-bottom">
+    <!-- QR -->
+    <div class="bb-qr">
+      <div id="qr-box"><div class="qr-ph">QR generado<br>automáticamente</div></div>
+      <div class="qr-label">Consulte su<br>comprobante en<br><b>www.smartclic.pe</b></div>
+    </div>
+
+    <!-- Totals -->
+    <div class="bb-totals">
+      <div class="tot-row"><span class="tot-lbl">OP. GRAVADAS:</span><span class="tot-val">S/ <span id="t-grav">0.00</span></span></div>
+      <div class="tot-row"><span class="tot-lbl">OP. EXONERADAS:</span><span class="tot-val">S/ 0.00</span></div>
+      <div class="tot-row"><span class="tot-lbl">OP. INAFECTAS:</span><span class="tot-val">S/ 0.00</span></div>
+      <div class="tot-row"><span class="tot-lbl">OP. GRATUITAS:</span><span class="tot-val">S/ 0.00</span></div>
+      <div class="tot-row"><span class="tot-lbl">SUB TOTAL:</span><span class="tot-val">S/ <span id="t-sub">0.00</span></span></div>
+      <div class="tot-row"><span class="tot-lbl">DESCUENTOS TOTAL:</span><span class="tot-val">S/ 0</span></div>
+      <div class="tot-row"><span class="tot-lbl">IGV 18.0%:</span><span class="tot-val">S/ <span id="t-igv">0.00</span></span></div>
+      <div class="tot-row"><span class="tot-lbl">ICBPER:</span><span class="tot-val">S/ 0.00</span></div>
+      <div class="tot-row"><span class="tot-lbl">ADELANTOS:</span><span class="tot-val">S/ 0.00</span></div>
+      <div class="tot-grand">
+        <span class="tg-label">TOTAL: S/</span>
+        <span class="tg-val" id="t-total">0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAMP -->
+  <div class="bh-stamp">
+    CEL PARA PEDIDOS: 985222938 / 904566497 &nbsp;|&nbsp;
+    USUARIO: <span id="stamp-usr"></span><br>
+    Representación impresa de la BOLETA DE VENTA ELECTRÓNICA.
+    Autorizado mediante resolución N° 054-006-0001490 / SUNAT.
+    Consulte su comprobante en <b>www.smartclic.pe</b> &nbsp;—&nbsp;
+    <b>SmartClic™</b> Comprobante emitido a través de www.smartclic.pe
+  </div>
+
+</div><!-- /boleta -->
+
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>Agregar Producto</h3>
+    <div class="fg">
+      <label>Descripción</label>
+      <textarea id="m-desc" rows="2" placeholder="Ej: PRODUCTO DEPORTE RODILLA"></textarea>
+    </div>
+    <div class="fg-2">
+      <div class="fg">
+        <label>Cantidad</label>
+        <input type="number" id="m-cant" value="1" min="0.001" step="0.001" oninput="calcPrev()" />
+      </div>
+      <div class="fg">
+        <label>Unidad</label>
+        <input type="text" id="m-unid" value="UNIDAD" />
+      </div>
+    </div>
+    <div class="fg">
+      <label>Precio unitario con IGV incluido (S/)</label>
+      <input type="number" id="m-precio" min="0" step="0.01" placeholder="0.00" oninput="calcPrev()" />
+    </div>
+    <div class="prev">
+      <div class="prow"><span>Valor unitario (sin IGV)</span><span id="pv-vu">S/ 0.00</span></div>
+      <div class="prow"><span>IGV unitario (18%)</span><span id="pv-ig">S/ 0.00</span></div>
+      <div class="prow"><span>Precio unitario</span><span id="pv-pu">S/ 0.00</span></div>
+      <div class="prow pbig"><span>TOTAL LÍNEA</span><span id="pv-tt">S/ 0.00</span></div>
+    </div>
+    <div class="m-acts">
+      <button class="btn btn-sm" style="background:#eee;color:#333;" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-blue btn-sm" onclick="guardarItem()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+let items   = [];
+let editIdx = null;
+let bNum    = 1;
+const FILLER = 5; // filas vacías mínimas
+
+// ── Fecha ──
+function fmtD(d) {
+  return [String(d.getDate()).padStart(2,'0'),
+          String(d.getMonth()+1).padStart(2,'0'),
+          d.getFullYear()].join('/');
+}
+const NOW = new Date();
+document.getElementById('f-emision').textContent = fmtD(NOW);
+document.getElementById('f-venc').textContent    = fmtD(NOW);
+document.getElementById('stamp-usr').textContent =
+  `anvicol-caja ${fmtD(NOW)} ${NOW.toTimeString().slice(0,5)}`;
+actualizarNumBoleta();
+
+// RUC mirror
+document.getElementById('ruc-edit').addEventListener('input', function(){
+  document.getElementById('ruc-mirror').textContent = this.textContent.trim();
+});
+
+function actualizarNumBoleta() {
+  document.getElementById('num-boleta').textContent =
+    `B001-${String(bNum).padStart(8,'0')}`;
+}
+
+// ── Código ──
+function genCod() {
+  const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  return Array.from({length:8}, ()=>c[Math.random()*c.length|0]).join('');
+}
+
+// ── Modal ──
+function abrirModal(idx=null) {
+  editIdx = idx;
+  if (idx !== null) {
+    const it = items[idx];
+    document.getElementById('m-desc').value   = it.desc;
+    document.getElementById('m-cant').value   = it.cant;
+    document.getElementById('m-unid').value   = it.unid;
+    document.getElementById('m-precio').value = it.punit.toFixed(2);
+  } else {
+    document.getElementById('m-desc').value   = '';
+    document.getElementById('m-cant').value   = '1';
+    document.getElementById('m-unid').value   = 'UNIDAD';
+    document.getElementById('m-precio').value = '';
+  }
+  calcPrev();
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('m-desc').focus(), 80);
+}
+function cerrarModal() {
+  document.getElementById('overlay').classList.remove('open');
+  editIdx = null;
+}
+document.getElementById('overlay').addEventListener('click', e=>{
+  if(e.target===document.getElementById('overlay')) cerrarModal();
+});
+
+function calcPrev() {
+  const cant  = parseFloat(document.getElementById('m-cant').value)  || 0;
+  const punit = parseFloat(document.getElementById('m-precio').value) || 0;
+  const vunit = punit / 1.18;
+  const igvU  = punit - vunit;
+  document.getElementById('pv-vu').textContent = `S/ ${vunit.toFixed(2)}`;
+  document.getElementById('pv-ig').textContent = `S/ ${igvU.toFixed(2)}`;
+  document.getElementById('pv-pu').textContent = `S/ ${punit.toFixed(2)}`;
+  document.getElementById('pv-tt').textContent = `S/ ${(punit*cant).toFixed(2)}`;
+}
+
+function guardarItem() {
+  const desc  = document.getElementById('m-desc').value.trim();
+  const cant  = parseFloat(document.getElementById('m-cant').value)  || 1;
+  const unid  = document.getElementById('m-unid').value.trim() || 'UNIDAD';
+  const punit = parseFloat(document.getElementById('m-precio').value) || 0;
+  if (!desc)  { alert('Ingresa una descripción.'); return; }
+  if (!punit) { alert('Ingresa el precio unitario.'); return; }
+  const vunit = punit / 1.18;
+  const igvU  = punit - vunit;
+  const total = punit * cant;
+  const item  = { desc, cant, unid, punit, vunit, igvU, total,
+                   codigo: editIdx!==null ? items[editIdx].codigo : genCod() };
+  if (editIdx!==null) items[editIdx]=item; else items.push(item);
+  cerrarModal();
+  render();
+}
+
+// ── Render ──
+function render() {
+  const tbody = document.getElementById('tbody');
+  let html = '';
+
+  items.forEach((it, i) => {
+    html += `<tr>
+      <td>${i+1}</td>
+      <td>${it.cant.toFixed(3)}</td>
+      <td>${it.unid}</td>
+      <td class="td-code">${it.codigo}</td>
+      <td class="td-d">${it.desc}</td>
+      <td>${it.vunit.toFixed(2)}</td>
+      <td>${it.igvU.toFixed(2)}</td>
+      <td>${it.punit.toFixed(2)}</td>
+      <td><b>${it.total.toFixed(2)}</b></td>
+      <td class="no-print" style="white-space:nowrap;padding:3px 4px;">
+        <button class="btn btn-edit btn-sm" onclick="abrirModal(${i})">✎</button>
+        <button class="btn btn-del  btn-sm" onclick="delItem(${i})">✕</button>
+      </td>
+    </tr>`;
+  });
+
+  // filler rows
+  const fill = Math.max(0, FILLER - items.length);
+  for(let f=0;f<fill;f++)
+    html += `<tr class="empty-row"><td colspan="10">&nbsp;</td></tr>`;
+
+  tbody.innerHTML = html;
+  totales();
+  qrGen();
+}
+
+function delItem(i) { items.splice(i,1); render(); }
+
+// ── Totales ──
+function totales() {
+  const tot = items.reduce((s,it)=>s+it.total,0);
+  const igv = items.reduce((s,it)=>s+it.igvU*it.cant,0);
+  const sub = tot - igv;
+  document.getElementById('t-grav').textContent  = sub.toFixed(2);
+  document.getElementById('t-sub').textContent   = sub.toFixed(2);
+  document.getElementById('t-igv').textContent   = igv.toFixed(2);
+  document.getElementById('t-total').textContent = tot.toFixed(2);
+  document.getElementById('letras').textContent  = 'SON: '+numLetras(tot)+' SOLES';
+}
+
+// ── Número a letras ──
+function numLetras(n) {
+  const ent=Math.floor(n), dec=Math.round((n-ent)*100);
+  return enL(ent).toUpperCase()+' CON '+String(dec).padStart(2,'0')+'/100';
+}
+function enL(n) {
+  if(!n) return 'CERO';
+  const u=['','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE',
+           'DIEZ','ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISÉIS','DIECISIETE','DIECIOCHO','DIECINUEVE'];
+  const d=['','','VEINTE','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
+  const c=['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS',
+           'SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
+  if(n<20)    return u[n];
+  if(n<100)   return d[n/10|0]+(n%10?' Y '+u[n%10]:'');
+  if(n===100) return 'CIEN';
+  if(n<1000)  return c[n/100|0]+(n%100?' '+enL(n%100):'');
+  if(n===1000) return 'MIL';
+  if(n<2000)  return 'MIL '+(n%1000?enL(n%1000):'');
+  if(n<1e6)   return enL(n/1000|0)+' MIL'+(n%1000?' '+enL(n%1000):'');
+  return n.toString();
+}
+
+// ── QR ──
+function qrGen() {
+  const cliente = document.getElementById('cliente').value   || 'CLIENTE';
+  const dni     = document.getElementById('dni').value       || '00000000';
+  const boleta  = document.getElementById('num-boleta').textContent;
+  const total   = document.getElementById('t-total').textContent;
+  const fecha   = document.getElementById('f-emision').textContent;
+  const ruc     = document.getElementById('ruc-edit').textContent.trim();
+  const txt = `RUC:${ruc}|${boleta}|${fecha}|${cliente}|DNI:${dni}|TOTAL:S/${total}|www.smartclic.pe`;
+  const box = document.getElementById('qr-box');
+  box.innerHTML = '';
+  new QRCode(box,{text:txt,width:100,height:100,
+    colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+}
+['cliente','dni'].forEach(id=>
+  document.getElementById(id).addEventListener('input', qrGen)
+);
+
+// ── Nueva boleta ──
+function nuevaBoleta() {
+  if(items.length && !confirm('¿Crear nueva boleta? Se perderán los datos actuales.')) return;
+  items=[]; editIdx=null; bNum++;
+  actualizarNumBoleta();
+  ['cliente','dni','direccion','obs'].forEach(id=>document.getElementById(id).value='');
+  const n=new Date();
+  document.getElementById('f-emision').textContent=fmtD(n);
+  document.getElementById('f-venc').textContent=fmtD(n);
+  document.getElementById('stamp-usr').textContent=
+    `anvicol-caja ${fmtD(n)} ${n.toTimeString().slice(0,5)}`;
+  render();
+}
+
+// ── Init ──
+window.addEventListener('load', render);
+</script>
+</body>
+</html>
