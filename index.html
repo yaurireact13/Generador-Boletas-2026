@@ -23,13 +23,15 @@ body {
   width:100%; max-width:760px;
   display:flex; justify-content:space-between; align-items:center;
   margin-bottom:16px; gap:10px;
+  flex-wrap:wrap;
 }
 .ctrl-title { font-size:.95rem; font-weight:700; color:#1a3263; }
-.ctrl-btns  { display:flex; gap:8px; }
+.ctrl-btns  { display:flex; gap:8px; flex-wrap:wrap; }
 .btn {
   padding:8px 18px; border:none; border-radius:4px;
   font-size:.8rem; font-weight:700; cursor:pointer;
   font-family:Arial,sans-serif; transition:.13s;
+  white-space:nowrap;
 }
 .btn-blue  { background:#1a3263; color:#fff; }
 .btn-blue:hover { background:#0e1f42; }
@@ -51,7 +53,7 @@ body {
   color:#000;
 }
 
-/* ── HEADER ROW: logo | ruc+badge ── */
+/* ── HEADER ROW ── */
 .bh-head {
   display:grid;
   grid-template-columns:1fr 200px;
@@ -77,7 +79,6 @@ body {
   text-transform:uppercase; letter-spacing:.4px;
 }
 .bh-company .s1 { font-size:9.5px; color:#333; margin-top:3px; }
-.bh-company .s2 { font-size:8.5px; color:#555; margin-top:2px; }
 .s2-input {
   font-size:8.5px; color:#444; margin-top:2px;
   background:none; border:none; border-bottom:1px dashed #bbb;
@@ -104,7 +105,6 @@ body {
   text-align:center;
   font-size:9px; font-weight:700; text-transform:uppercase;
   letter-spacing:.3px;
-  background:#fff;
 }
 
 /* ── CLIENT GRID ── */
@@ -125,19 +125,20 @@ input.bc-v {
   flex:1; background:none; border:none;
   border-bottom:1px dashed #bbb; outline:none;
   font-family:Arial,sans-serif; font-size:10px; color:#000;
+  min-width:0;
 }
 input.bc-v:focus { border-bottom-color:#1a3263; }
 
 /* ── TABLE ── */
-.tbl-wrap { border-bottom:1px solid #000; }
+.tbl-wrap { border-bottom:1px solid #000; overflow-x:auto; }
 table.itbl {
-  width:100%; border-collapse:collapse; font-size:10px;
+  width:100%; min-width:520px; border-collapse:collapse; font-size:10px;
 }
 table.itbl thead tr { background:#222; color:#fff; }
 table.itbl thead th {
   padding:5px 5px; font-size:9.5px; font-weight:700;
   text-align:center; text-transform:uppercase;
-  border-right:1px solid #555;
+  border-right:1px solid #555; white-space:nowrap;
 }
 table.itbl thead th:last-child { border-right:none; }
 table.itbl tbody tr { border-bottom:1px solid #ddd; }
@@ -157,6 +158,7 @@ table.itbl tbody td.td-code { font-family:monospace; font-size:9px; color:#444; 
   padding:5px 12px;
   font-size:10.5px; font-weight:700; font-style:italic;
   text-align:right; letter-spacing:.15px;
+  word-break:break-word;
 }
 
 /* ── OBS ── */
@@ -182,7 +184,7 @@ textarea.obs-ta {
   align-items:center; justify-content:center;
   padding:10px 12px; gap:5px;
 }
-#qr-box { width:100px; height:100px; }
+#qr-box { width:100px; height:100px; flex-shrink:0; }
 #qr-box canvas, #qr-box img { width:100px !important; height:100px !important; }
 .qr-ph {
   width:100px; height:100px;
@@ -203,7 +205,6 @@ textarea.obs-ta {
 }
 .tot-row:last-child { border-bottom:none; }
 .tot-lbl { font-weight:700; }
-.tot-val { }
 .tot-grand {
   display:flex; justify-content:flex-end;
   align-items:center; gap:14px;
@@ -222,6 +223,89 @@ textarea.obs-ta {
   border-top:1px solid #ccc;
 }
 
+/* ══════════════════
+   RESPONSIVE — móvil
+══════════════════ */
+@media (max-width: 600px) {
+  body { padding:12px 6px; }
+
+  .controls {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .ctrl-title { font-size:.85rem; }
+  .ctrl-btns { width:100%; }
+  .ctrl-btns .btn { flex:1; text-align:center; padding:10px 6px; font-size:.78rem; }
+
+  /* Header: apila logo arriba, badge abajo */
+  .bh-head {
+    grid-template-columns:1fr;
+  }
+  .bh-left {
+    border-right:none;
+    border-bottom:1px solid #000;
+    padding:10px 10px;
+    gap:10px;
+  }
+  .logo-sq { width:50px; height:50px; }
+  .logo-sq .lt { font-size:17px; }
+  .logo-sq .lb { font-size:9px; }
+  .bh-company h2 { font-size:13px; }
+  .bh-right {
+    padding:8px 10px;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+    text-align:left;
+  }
+  .bh-right .ruc-big { margin-bottom:0; font-size:10px; }
+  .doc-frame { padding:5px 10px; }
+  .doc-frame .doc-t { font-size:9.5px; }
+  .doc-frame .doc-n { font-size:10px; }
+
+  /* Cliente: apila columnas */
+  .bh-client {
+    grid-template-columns:1fr;
+  }
+  .bc-col:first-child {
+    border-right:none;
+    border-bottom:1px solid #000;
+  }
+  .bc-row { font-size:11px; }
+  input.bc-v { font-size:11px; }
+
+  /* Tabla: scroll horizontal */
+  .tbl-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table.itbl { font-size:9.5px; }
+  table.itbl thead th { font-size:8.5px; padding:4px 4px; }
+  table.itbl tbody td { padding:4px 4px; font-size:9.5px; }
+
+  /* Letras */
+  .bh-letras { font-size:9.5px; text-align:left; }
+
+  /* Bottom: apila QR arriba, totales abajo */
+  .bh-bottom {
+    grid-template-columns:1fr;
+  }
+  .bb-qr {
+    border-right:none;
+    border-bottom:1px solid #000;
+    flex-direction:row;
+    justify-content:flex-start;
+    padding:10px 12px;
+    gap:12px;
+  }
+  .qr-label { text-align:left; }
+
+  .tot-row { font-size:10px; padding:3px 10px; }
+  .tot-grand { padding:8px 10px; }
+  .tot-grand .tg-label,
+  .tot-grand .tg-val { font-size:15px; }
+
+  .bh-stamp { font-size:7.5px; }
+}
+
 /* ── PRINT ── */
 @media print {
   body { background:#fff; padding:0; }
@@ -230,6 +314,16 @@ textarea.obs-ta {
   input, textarea { border-color:transparent !important; }
   .btn-edit, .btn-del { display:none; }
   .tbl-addbtn { display:none; }
+  /* Restaurar grid para impresión aunque sea móvil */
+  .bh-head    { grid-template-columns:1fr 200px !important; }
+  .bh-client  { grid-template-columns:1fr 1fr !important; }
+  .bh-bottom  { grid-template-columns:130px 1fr !important; }
+  .bh-left    { border-right:1px solid #000 !important; border-bottom:none !important; }
+  .bc-col:first-child { border-right:1px solid #000 !important; border-bottom:none !important; }
+  .bb-qr      { border-right:1px solid #000 !important; border-bottom:none !important;
+                flex-direction:column !important; }
+  .bh-right   { flex-direction:column !important; text-align:center !important; }
+  .bh-right .ruc-big { margin-bottom:7px !important; }
 }
 
 /* ── MODAL ── */
@@ -237,22 +331,24 @@ textarea.obs-ta {
   display:none; position:fixed; inset:0;
   background:rgba(0,0,0,.52); z-index:999;
   align-items:center; justify-content:center;
+  padding:12px;
 }
 .overlay.open { display:flex; }
 .modal {
   background:#fff; border-radius:8px;
-  padding:26px 24px; width:370px;
+  padding:22px 20px; width:100%; max-width:370px;
   box-shadow:0 10px 40px rgba(0,0,0,.28);
   animation:pop .17s ease;
+  max-height:90vh; overflow-y:auto;
 }
 @keyframes pop {
   from{transform:scale(.92);opacity:0}
   to  {transform:scale(1);  opacity:1}
 }
 .modal h3 {
-  font-size:.98rem; font-weight:900; color:#1a3263;
+  font-size:.95rem; font-weight:900; color:#1a3263;
   text-transform:uppercase; letter-spacing:.4px;
-  margin-bottom:18px;
+  margin-bottom:16px;
 }
 .fg { margin-bottom:13px; }
 .fg label {
@@ -260,9 +356,9 @@ textarea.obs-ta {
   color:#666; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px;
 }
 .fg input, .fg textarea {
-  width:100%; padding:8px 10px;
+  width:100%; padding:10px 10px;
   border:1.5px solid #ccc; border-radius:4px;
-  font-family:Arial,sans-serif; font-size:.88rem;
+  font-family:Arial,sans-serif; font-size:1rem;
   outline:none; transition:border-color .13s;
 }
 .fg input:focus, .fg textarea:focus { border-color:#1a3263; }
@@ -277,6 +373,7 @@ textarea.obs-ta {
   font-weight:900; font-size:.9rem; color:#1a3263;
 }
 .m-acts { display:flex; gap:8px; justify-content:flex-end; margin-top:4px; }
+.m-acts .btn { padding:10px 18px; font-size:.82rem; }
 </style>
 </head>
 <body>
