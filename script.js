@@ -154,6 +154,7 @@ function nuevaBoleta() {
   items = []; editIdx = null; bNum++;
   actualizarNumBoleta();
   ['cliente', 'dni', 'direccion', 'obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('forma-pago').value = 'YAPE';
   const n = new Date();
   document.getElementById('f-emision').textContent = fmtD(n);
   document.getElementById('f-venc').textContent = fmtD(n);
