@@ -10,9 +10,10 @@
 </head>
 <body>
   <div class="controls no-print">
-    <span class="ctrl-title">🧾 PUNTO MARKET — Generador de Boletas</span>
+    <span class="ctrl-title">🧾 PUNTO MARKET — Generador de Comprobantes</span>
     <div class="ctrl-btns">
-      <button class="btn btn-blue" onclick="nuevaBoleta()">＋ Nueva Boleta</button>
+      <button class="btn btn-blue" id="tipo-btn" onclick="cambiarTipoDocumento()">Cambiar a Factura</button>
+      <button class="btn btn-blue" onclick="nuevaBoleta()">＋ Nuevo comprobante</button>
       <button class="btn btn-red" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
     </div>
   </div>
@@ -30,13 +31,17 @@
       </div>
       <div class="bh-right">
         <div class="ruc-big">RUC <span id="ruc-mirror">20608273621</span></div>
+<<<<<<< HEAD
           <div class="doc-frame"><div class="doc-t">FACTURA</div><div class="doc-n" id="num-boleta">B001-00012026</div></div>
+=======
+        <div class="doc-frame"><div class="doc-t" id="doc-tipo">BOLETA</div><div class="doc-n" id="num-boleta">B001-00000001</div></div>
+>>>>>>> f53fb7a (actualizado)
       </div>
     </div>
 
     <div class="bh-client">
       <div class="bc-col">
-        <div class="bc-row"><span class="bc-lbl">RAZON SOCIAL:</span><input class="bc-v" id="cliente" type="text" placeholder="Nombre completo del cliente"></div>
+        <div class="bc-row"><span class="bc-lbl" id="cliente-lbl">NOMBRE:</span><input class="bc-v" id="cliente" type="text" placeholder="Nombre completo del cliente"></div>
         <div class="bc-row"><span class="bc-lbl">DNI/RUC:</span><input class="bc-v" id="dni" type="text" placeholder="00000000" maxlength="11" style="max-width:120px;"></div>
         <div class="bc-row"><span class="bc-lbl">DIRECCIÓN:</span><input class="bc-v" id="direccion" type="text" placeholder="Dirección"></div>
       </div>
@@ -83,7 +88,11 @@
       <strong>Para tus proximas Compras</strong><br>
       CEL PARA PEDIDOS: 992155022 / 921876815<br>
       USUARIO: <span id="stamp-usr"></span><br>
+<<<<<<< HEAD
       Representación impresa de la FACTURA DE VENTA ELECTRÓNICA.<br>
+=======
+      Representación impresa de la <span id="stamp-tipo">BOLETA DE VENTA</span> ELECTRÓNICA.<br>
+>>>>>>> f53fb7a (actualizado)
       Consulte su comprobante en <b>www.smartclic.pe</b>
     </div>
   </div>

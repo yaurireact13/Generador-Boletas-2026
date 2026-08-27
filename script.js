@@ -1,6 +1,7 @@
 let items = [];
 let editIdx = null;
 let bNum = 1;
+let tipoDocumento = 'BOLETA';
 const FILLER = 5;
 
 function fmtD(d) {
@@ -18,7 +19,19 @@ document.getElementById('ruc-edit').addEventListener('input', function () {
 });
 
 function actualizarNumBoleta() {
-  document.getElementById('num-boleta').textContent = `B001-${String(bNum).padStart(8, '0')}`;
+  const serie = tipoDocumento === 'FACTURA' ? 'F001' : 'B001';
+  document.getElementById('num-boleta').textContent = `${serie}-${String(bNum).padStart(8, '0')}`;
+  document.getElementById('doc-tipo').textContent = tipoDocumento;
+  document.getElementById('tipo-btn').textContent = tipoDocumento === 'BOLETA' ? 'Cambiar a Factura' : 'Cambiar a Boleta';
+  document.getElementById('stamp-tipo').textContent = tipoDocumento === 'BOLETA' ? 'BOLETA DE VENTA' : 'FACTURA';
+  document.getElementById('cliente-lbl').textContent = tipoDocumento === 'BOLETA' ? 'NOMBRE:' : 'RAZÓN SOCIAL:';
+  document.getElementById('cliente').placeholder = tipoDocumento === 'BOLETA' ? 'Nombre completo del cliente' : 'Razón social';
+}
+
+function cambiarTipoDocumento() {
+  tipoDocumento = tipoDocumento === 'BOLETA' ? 'FACTURA' : 'BOLETA';
+  actualizarNumBoleta();
+  qrGen();
 }
 
 function genCod() {
@@ -137,11 +150,11 @@ function enL(n) {
 function qrGen() {
   const cliente = document.getElementById('cliente').value || 'CLIENTE';
   const dni = document.getElementById('dni').value || '00000000';
-  const boleta = document.getElementById('num-boleta').textContent;
+  const comprobante = document.getElementById('num-boleta').textContent;
   const total = document.getElementById('t-total').textContent;
   const fecha = document.getElementById('f-emision').textContent;
   const ruc = document.getElementById('ruc-edit').textContent.trim();
-  const txt = `RUC:${ruc}|${boleta}|${fecha}|${cliente}|DNI:${dni}|TOTAL:S/${total}|www.smartclic.pe`;
+  const txt = `RUC:${ruc}|${tipoDocumento}|${comprobante}|${fecha}|${cliente}|DNI:${dni}|TOTAL:S/${total}|www.smartclic.pe`;
   const box = document.getElementById('qr-box');
   box.innerHTML = '';
   new QRCode(box, { text: txt, width: 100, height: 100, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
